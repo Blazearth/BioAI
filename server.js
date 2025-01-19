@@ -1,19 +1,16 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
-const app = express();
-const PORT = 3000;
+// Middleware
+const app = require('express')();
+app.use(cors());
+app.use(bodyParser.json());
 
 // Voiceflow API Key and Project Details
 const API_KEY = 'VF.DM.678d3225db80fb6a72c1e4ff.p6Gr5egiKC2nOpuP';
 const PROJECT_ID = '678d1fdbc2593b028d023b6d';
 const VERSION_ID = 'production';
-
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
 
 // Endpoint for interacting with the bot
 app.post('/interact', async (req, res) => {
@@ -47,7 +44,5 @@ app.post('/interact', async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// Export the handler as a serverless function for Vercel
+module.exports = app;
