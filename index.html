@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Interface</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #2e2e2e; /* Dark grey background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff; /* Default text color */
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 900px; /* Increased max width for a larger box */
+      background: #333; /* Darker background for the chat box */
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 10px;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      border-bottom: 1px solid #444;
+      max-height: 75vh; /* To ensure the chat box fits within the screen */
+      position: relative;
+    }
+
+    .chat-box p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      opacity: 0; /* Initially hide the message */
+      animation: fadeIn 0.5s forwards; /* Animation for fade-in */
+    }
+
+    .chat-box p.user {
+      text-align: right;
+      color: #4caf50; /* Green for user messages */
+      background-color: #444; /* Background for user messages */
+      padding: 10px;
+      max-width: 80%;
+      border-radius: 10px;
+      margin-left: auto; /* Align to the right */
+    }
+
+    .chat-box p.bot {
+      text-align: left;
+      color: #fff; /* White for bot responses */
+      background-color: #555; /* Background for bot messages */
+      padding: 10px;
+      max-width: 80%;
+      border-radius: 10px;
+      margin-right: auto; /* Align to the left */
+    }
+
+    .input-container {
+      display: flex;
+      padding: 10px;
+      background: #444; /* Darker background for input area */
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      outline: none;
+      color: #fff; /* White text inside input */
+      background-color: #555; /* Dark background for input */
+    }
+
+    .input-container button {
+      padding: 10px 20px;
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .input-container button:hover {
+      background: #1565c0;
+    }
+
+    /* Typing animation for bot */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #fff; /* White dots */
+      margin-top: 10px;
+      opacity: 0;
+      animation: typing 1.5s infinite;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin: 0 3px;
+      background-color: #fff; /* White color */
+      border-radius: 50%;
+      animation: dot-blink 1.5s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    /* Keyframe animations */
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes typing {
+      0%, 100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes dot-blink {
+      0% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #888;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
+
+    .welcome-message {
+      text-align: center;
+      font-size: 18px;
+      color: #aaa;
+      margin-bottom: 20px;
+      font-style: italic;
+      animation: fadeIn 2s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      <p class="welcome-message">👋 Hello! I'm here to assist you. Feel free to ask any questions, and I'll do my best to help! 😊</p>
+    </div>
+    <div class="input-container">
+      <input type="text" id="userInput" placeholder="Type your message..." onkeydown="checkEnter(event)" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+    const userId = 'user123'; // Unique user ID for session management
+
+    // Function to detect Enter key press
+    const checkEnter = (event) => {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    };
+
+    const sendMessage = async () => {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      // Add user message to the chat box
+      addMessageToChat(message, 'user');
+      userInput.value = '';
+
+      // Show typing indicator
+      const typingIndicator = document.createElement('div');
+      typingIndicator.classList.add('typing-indicator');
+      typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+      chatBox.appendChild(typingIndicator);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const response = await fetch('http://localhost:3000/interact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id: userId, message }),
+        });
+
+        const data = await response.json();
+
+        // Remove typing indicator
+        typingIndicator.remove();
+
+        if (data.success) {
+          addMessageToChat(data.response, 'bot');
+        } else {
+          addMessageToChat('Sorry, there was an error.', 'bot');
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        typingIndicator.remove();
+        addMessageToChat('Sorry, there was an error.', 'bot');
+      }
+    };
+
+    const addMessageToChat = (message, sender) => {
+      const p = document.createElement('p');
+      p.textContent = message;
+      p.className = sender;
+      chatBox.appendChild(p);
+      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
+    };
+  </script>
+</body>
+</html>
