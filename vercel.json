@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "interact.js",
+      "src": "api/interact.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "interact.js"
+      "src": "/api/interact",
+      "dest": "/api/interact.js"
     }
   ]
 }
