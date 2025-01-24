@@ -15,6 +15,11 @@ const API_KEY = 'VF.DM.678d3225db80fb6a72c1e4ff.p6Gr5egiKC2nOpuP'; // Replace wi
 const PROJECT_ID = '678d1fdbc2593b028d023b6d'; // Replace with your project ID
 const VERSION_ID = 'production'; // Typically 'production', replace if using another version
 
+// Default Route
+app.get('/', (req, res) => {
+  res.send('Server is running. Use the /interact endpoint to interact with the bot.');
+});
+
 // Endpoint for interacting with the bot
 app.post('/interact', async (req, res) => {
   const { user_id, message } = req.body;
@@ -55,3 +60,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = app; // Export for Vercel
