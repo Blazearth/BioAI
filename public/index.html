@@ -31,6 +31,7 @@
       flex-direction: column;
       border-radius: 0; /* Remove border radius for full screen */
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      position: relative;
     }
 
     .chat-box {
@@ -39,6 +40,9 @@
       overflow-y: auto;
       border-bottom: 1px solid #c8e6c9; /* Light green border */
       background-color: #ffffff; /* White background */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
     }
 
     .chat-box p {
@@ -71,6 +75,10 @@
       padding: 16px;
       background: #ffffff; /* White background */
       border-top: 1px solid #c8e6c9; /* Light green border */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 
     .input-container input {
@@ -188,6 +196,36 @@
 
     ::-webkit-scrollbar-thumb:hover {
       background-color: #66bb6a; /* Green scrollbar on hover */
+    }
+
+    /* Mobile-specific adjustments */
+    @media (max-width: 600px) {
+      .chat-box {
+        padding: 10px;
+      }
+
+      .chat-box p {
+        font-size: 13px;
+        padding: 10px 14px;
+      }
+
+      .input-container {
+        padding: 12px;
+      }
+
+      .input-container input {
+        padding: 10px;
+        font-size: 13px;
+      }
+
+      .input-container button {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+
+      .welcome-message {
+        font-size: 14px;
+      }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
