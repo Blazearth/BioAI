@@ -37,12 +37,30 @@
     .chat-box {
       flex: 1;
       padding: 20px;
+      padding-bottom: 100px; /* Increased padding to match input-container height */
       overflow-y: auto; /* Enable vertical scrolling */
       border-bottom: 1px solid #c8e6c9; /* Light green border */
       background-color: #ffffff; /* White background */
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Align messages to the top */
+      position: relative; /* For absolute positioning of welcome message */
+    }
+
+    /* Welcome message container */
+    .welcome-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1; /* Ensure it's above other content */
+    }
+
+    .welcome-message {
+      font-size: 16px;
+      color: #4caf50; /* Green text */
+      font-style: italic;
+      animation: fadeIn 2s ease-out;
     }
 
     .chat-box p {
@@ -79,6 +97,9 @@
       bottom: 0;
       left: 0;
       right: 0;
+      height: 80px; /* Increased height */
+      z-index: 2; /* Ensure it stays above other content */
+      box-sizing: border-box; /* Include padding in height calculation */
     }
 
     .input-container input {
@@ -142,15 +163,6 @@
       animation-delay: 0.6s;
     }
 
-    .welcome-message {
-      text-align: center;
-      font-size: 16px;
-      color: #4caf50; /* Green text */
-      margin-bottom: 20px;
-      font-style: italic;
-      animation: fadeIn 2s ease-out;
-    }
-
     /* Animations */
     @keyframes fadeIn {
       from {
@@ -202,6 +214,7 @@
     @media (max-width: 600px) {
       .chat-box {
         padding: 10px;
+        padding-bottom: 90px; /* Adjust for mobile */
       }
 
       .chat-box p {
@@ -211,6 +224,7 @@
 
       .input-container {
         padding: 12px;
+        height: 70px; /* Adjust for mobile */
       }
 
       .input-container input {
@@ -233,7 +247,10 @@
 <body>
   <div class="chat-container">
     <div class="chat-box" id="chatBox">
-      <p class="welcome-message">🌿 Welcome to BioAI! Ask me anything about Biology (Class 11 & 12), and I'll help you out! 🧬</p>
+      <!-- Welcome message container -->
+      <div class="welcome-container">
+        <p class="welcome-message">🌿 Welcome to BioAI! Ask me anything about Biology (Class 11 & 12), and I'll help you out! 🧬</p>
+      </div>
     </div>
     <div class="input-container">
       <input type="text" id="userInput" placeholder="Type your biology question..." onkeydown="checkEnter(event)" />
@@ -257,6 +274,12 @@
       const message = userInput.value.trim();
       if (!message) return;
 
+      // Remove welcome message if it exists
+      const welcomeContainer = chatBox.querySelector('.welcome-container');
+      if (welcomeContainer) {
+        welcomeContainer.remove();
+      }
+
       // Add user message to the chat box
       addMessageToChat(message, 'user');
       userInput.value = '';
@@ -266,7 +289,7 @@
       typingIndicator.classList.add('typing-indicator');
       typingIndicator.innerHTML = '<span></span><span></span><span></span>';
       chatBox.appendChild(typingIndicator);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
 
       try {
         const response = await fetch('/api/interact', {
