@@ -3,105 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot Interface</title>
+  <title>Biology Chatbot</title>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
+    /* General Reset */
+    * {
       margin: 0;
       padding: 0;
-      background-color: #2e2e2e;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #e8f5e9; /* Light green background */
+      color: #1b5e20; /* Dark green text */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      color: #fff;
+      overflow: hidden;
     }
 
     .chat-container {
       width: 100%;
-      max-width: 900px;
-      background: #333;
-      border-radius: 10px;
-      overflow: hidden;
+      height: 100vh; /* Full screen height */
+      background: #ffffff; /* White container background */
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      padding: 10px;
+      border-radius: 0; /* Remove border radius for full screen */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
 
     .chat-box {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
-      border-bottom: 1px solid #444;
-      max-height: 75vh;
-      position: relative;
+      border-bottom: 1px solid #c8e6c9; /* Light green border */
+      background-color: #ffffff; /* White background */
     }
 
     .chat-box p {
       margin: 10px 0;
-      font-size: 1.1rem;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
       line-height: 1.5;
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
+      max-width: 80%;
+      position: relative;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
     .chat-box p.user {
-      text-align: right;
-      color: #4caf50;
-      background-color: #444;
-      padding: 10px;
-      max-width: 80%;
-      border-radius: 10px;
+      background-color: #66bb6a; /* Green for user messages */
+      color: #ffffff; /* White text */
       margin-left: auto;
+      text-align: right;
     }
 
     .chat-box p.bot {
-      text-align: left;
-      color: #fff;
-      background-color: #555;
-      padding: 10px;
-      max-width: 80%;
-      border-radius: 10px;
+      background-color: #f1f8e9; /* Light green for bot messages */
+      color: #1b5e20; /* Dark green text */
       margin-right: auto;
+      border: 1px solid #c8e6c9; /* Light green border */
     }
 
     .input-container {
       display: flex;
-      padding: 10px;
-      background: #444;
+      padding: 16px;
+      background: #ffffff; /* White background */
+      border-top: 1px solid #c8e6c9; /* Light green border */
     }
 
     .input-container input {
       flex: 1;
-      padding: 10px;
-      border: 1px solid #555;
-      border-radius: 4px;
+      padding: 12px;
+      border: 1px solid #c8e6c9; /* Light green border */
+      border-radius: 8px;
       outline: none;
-      color: #fff;
-      background-color: #555;
+      font-size: 14px;
+      margin-right: 10px;
+      background-color: #f1f8e9; /* Light green input background */
+      color: #1b5e20; /* Dark green text */
+      transition: border-color 0.3s ease;
+    }
+
+    .input-container input:focus {
+      border-color: #66bb6a; /* Green border on focus */
     }
 
     .input-container button {
-      padding: 10px 20px;
-      background: #1e88e5;
+      padding: 12px 20px;
+      background: #66bb6a; /* Green button */
       color: white;
       border: none;
-      border-radius: 4px;
-      margin-left: 10px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
     }
 
     .input-container button:hover {
-      background: #1565c0;
+      background-color: #4caf50; /* Darker green on hover */
     }
 
     .typing-indicator {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
-      color: #fff;
+      font-size: 14px;
+      color: #666;
       margin-top: 10px;
       opacity: 0;
       animation: typing 1.5s infinite;
@@ -109,10 +118,10 @@
 
     .typing-indicator span {
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       margin: 0 3px;
-      background-color: #fff;
+      background-color: #666;
       border-radius: 50%;
       animation: dot-blink 1.5s infinite;
     }
@@ -125,9 +134,24 @@
       animation-delay: 0.6s;
     }
 
+    .welcome-message {
+      text-align: center;
+      font-size: 16px;
+      color: #4caf50; /* Green text */
+      margin-bottom: 20px;
+      font-style: italic;
+      animation: fadeIn 2s ease-out;
+    }
+
+    /* Animations */
     @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
       to {
         opacity: 1;
+        transform: translateY(0);
       }
     }
 
@@ -152,36 +176,29 @@
       }
     }
 
+    /* Scrollbar Styling */
     ::-webkit-scrollbar {
       width: 8px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: #888;
+      background-color: #c8e6c9; /* Light green scrollbar */
       border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: #555;
-    }
-
-    .welcome-message {
-      text-align: center;
-      font-size: 18px;
-      color: #aaa;
-      margin-bottom: 20px;
-      font-style: italic;
-      animation: fadeIn 2s ease-out;
+      background-color: #66bb6a; /* Green scrollbar on hover */
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="chat-container">
     <div class="chat-box" id="chatBox">
-      <p class="welcome-message">👋 Hello! I'm here to assist you. Feel free to ask any questions, and I'll do my best to help! 😊</p>
+      <p class="welcome-message">🌿 Welcome to BioAI! Ask me anything about Biology (Class 11 & 12), and I'll help you out! 🧬</p>
     </div>
     <div class="input-container">
-      <input type="text" id="userInput" placeholder="Type your message..." onkeydown="checkEnter(event)" />
+      <input type="text" id="userInput" placeholder="Type your biology question..." onkeydown="checkEnter(event)" />
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
